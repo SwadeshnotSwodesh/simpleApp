@@ -1,5 +1,6 @@
 package net.engineeringdigest.journalApp.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -8,14 +9,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import net.engineeringdigest.journalApp.entity.JournalEntry;
+import net.engineeringdigest.journalApp.entity.User;
 import net.engineeringdigest.journalApp.repository.JournalEntryRepository;
 
 @Component
 public class JournalEntryService {//service section is always for Business logic
     @Autowired
     private JournalEntryRepository journalEntryRepository;//dependency injection
+
+    @Autowired
+    private UserService userService;
     
     
+    public void saveEntry(JournalEntry journalEntry, String userName)
+    {
+        User user=userService.findByUserName(userName);
+        journalEntry.setDate(LocalDateTime.now());
+        JournalEntry saved=journalEntryRepository.save(journalEntry);//.save from the interface
+        user.getJournalEntries().add(saved);
+        userService.saveEntry(user);
+    }
+
+
     public void saveEntry(JournalEntry journalEntry)
     {
         journalEntryRepository.save(journalEntry);//.save from the interface
@@ -33,8 +48,11 @@ public class JournalEntryService {//service section is always for Business logic
     }
 
 
-    public void deleteById(ObjectId id)
+    public void deleteById(ObjectId id, String userName)
     {
+        User user=userService.findByUserName(userName);
+        user.getJournalEntries().removeIf(x->x.getId().equals(id));
+        userService.saveEntry(user);
         journalEntryRepository.deleteById(id);
     }
 

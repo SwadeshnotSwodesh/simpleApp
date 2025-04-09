@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import com.mongodb.lang.NonNull;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 //import org.springframework.web.bind.annotation.RequestMapping;
 //import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +20,7 @@ import lombok.Data;
 //@RequestMapping("/journal")
 @Document(collection = "journal_entries")
 @Data
+@NoArgsConstructor
 public class JournalEntry {
 
     @Id
